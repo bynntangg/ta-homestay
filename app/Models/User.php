@@ -52,4 +52,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Homestay::class, 'pemilik_id');
     }
+
+    public function pemesanans() {
+        return $this->hasMany(Pemesanan::class);
+    }
+
+    public function ulasans() {
+        return $this->hasMany(Ulasan::class);
+    }
+
+    public function notifikasis() {
+        return $this->hasMany(Notifikasi::class);
+    }
 }

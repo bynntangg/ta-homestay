@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('notifikasis', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->text('pesan');
             $table->date('tanggal_notifikasi');
             $table->boolean('status_dibaca')->default(false);

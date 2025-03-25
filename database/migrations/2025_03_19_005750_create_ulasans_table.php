@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('ulasans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
-            $table->foreignId('homestay_id')->constrained('homestays');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('homestay_id')->constrained('homestays')->onDelete('cascade');
             $table->text('komentar');
             $table->tinyInteger('rating')->unsigned()->between(1, 5);
             $table->date('tanggal_ulasan');

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nomor');
             $table->boolean('ketersediaan')->default(true);
-            $table->foreignId('tipe_kamar_id')->constrained('tipe_kamars');
+            $table->foreignId('tipe_kamar_id')->constrained('tipe_kamars')->onDelete('cascade');
             $table->timestamps();
         });
     }
