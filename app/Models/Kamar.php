@@ -8,8 +8,8 @@ class Kamar extends Model
 {
     protected $fillable = ['nomor', 'ketersediaan', 'tipe_kamar_id'];
 
-    public function tipeKamars()
+    public function tipeKamar()
     {
-        return $this->belongsTo(TipeKamar::class);
+        return $this->belongsTo(TipeKamar::class, 'tipe_kamar_id');
     }
 }

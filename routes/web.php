@@ -42,16 +42,26 @@ Route::middleware('auth')->group(function () {
 
 // Route untuk pemilik
 Route::prefix('pemilik')->group(function () {
+    // Resource routes with custom names
     Route::resource('homestays', HomestayController::class)->names([
         'index' => 'pemilik.homestays.index',
         'store' => 'pemilik.homestays.store',
         'edit' => 'pemilik.homestays.edit',
+        'showDetail' => 'pemilik.homestays.showDetail',
         'update' => 'pemilik.homestays.update',
         'destroy' => 'pemilik.homestays.destroy',
     ]);
+
+    // Additional detail route (show)
+    Route::get('pemilik/homestays/{homestay}', [HomestayController::class, 'show'])
+        ->name('pemilik.homestays.detail');
 });
 
+Route::get('/dashboard', [DashboardController::class, 'pengguna'])->name('dashboard.pengguna');
 
+Route::get('/homestay/{id}/detail', [HomestayController::class, 'show'])->name('homestay.detail');
+Route::get('/dashboard/pengguna', [DashboardController::class, 'pengguna'])
+    ->name('dashboard.pengguna');
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
     \UniSharp\LaravelFilemanager\Lfm::routes();
 });
@@ -83,4 +93,18 @@ Route::prefix('pemilik')->group(function () {
 Route::prefix('pemilik')->group(function () {
     Route::get('/dashboard', [DashboardPemilikController::class, 'index'])->name('pemilik.dashboard.index');
 });
+
+// routes/web.php
+Route::get('/profile', function () {
+    return view('profile');
+})->name('profile');
+
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
+
+Route::post('/logout', function () {
+    Auth::logout();
+    return redirect('/');
+})->name('logout');
 require __DIR__.'/auth.php';

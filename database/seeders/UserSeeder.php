@@ -23,6 +23,16 @@ class UserSeeder extends Seeder
             'role' => 'pemilik',
         ]);
 
+         // pemilik
+         User::create([
+            'name' => 'Owner E Homestay',
+            'email' => 'owner2@gmail.com',
+            'password' => Hash::make('simul123'),
+            'role' => 'pemilik',
+        ]);
+
+
+
         // Pengguna
         User::create([
             'name' => 'Bintang Permana',
