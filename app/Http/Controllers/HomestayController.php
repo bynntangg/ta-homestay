@@ -11,18 +11,14 @@ class HomestayController extends Controller
 {
     public function index()
     {
-        // Cek apakah user sudah memiliki homestay
         $homestay = Homestay::where('pemilik_id', Auth::id())->first();
 
         if ($homestay) {
-            // Jika sudah memiliki homestay, tampilkan data show
             return view('pemilik.homestays.index', ['mode' => 'show', 'homestay' => $homestay]);
         } else {
-            // Jika belum memiliki homestay, tampilkan form create
             return view('pemilik.homestays.index', ['mode' => 'create']);
         }
     }
-
 
     public function store(Request $request)
     {
@@ -32,70 +28,74 @@ class HomestayController extends Controller
             'deskripsi' => 'required|string',
             'rating' => 'required|integer|between:1,5',
             'fasilitas' => 'nullable|array',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi untuk file gambar
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-    
-        // Menambahkan pemilik_id dari user yang sedang login
+
         $validatedData['pemilik_id'] = Auth::id();
-    
-        // Handle file upload
+
+        // Simpan gambar ke storage & simpan nama file ke database
         if ($request->hasFile('foto')) {
-            $foto = $request->file('foto');
-            $fotoBinary = file_get_contents($foto->getRealPath()); // Konversi file ke binary
-            $validatedData['foto'] = $fotoBinary;
+            $fotoNama = time() . '.' . $request->foto->extension();
+            $request->foto->storeAs('public/homestays', $fotoNama);
+            $validatedData['foto'] = $fotoNama;
         }
-    
-        // Membuat homestay baru
+
         Homestay::create($validatedData);
-    
+
         return redirect()->route('pemilik.homestays.index')->with('success', 'Homestay berhasil ditambahkan.');
     }
 
-
     public function edit(Homestay $homestay)
     {
-        // Pastikan homestay milik user yang sedang login
         if ($homestay->pemilik_id !== Auth::id()) {
             abort(403, 'Unauthorized');
         }
-    
-        // Kembalikan view yang sama seperti create, tetapi dengan mode edit
+
         return view('pemilik.homestays.index', ['mode' => 'edit', 'homestay' => $homestay]);
     }
+
     public function update(Request $request, Homestay $homestay)
-{
-    // Pastikan homestay milik user yang sedang login
-    if ($homestay->pemilik_id !== Auth::id()) {
-        abort(403, 'Unauthorized');
-    }
-
-    $validatedData = $request->validate([
-        'nama' => 'required|string|max:255',
-        'alamat' => 'required|string',
-        'deskripsi' => 'required|string',
-        'rating' => 'required|integer|between:1,5',
-        'fasilitas' => 'nullable|array',
-        'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validasi untuk file gambar
-    ]);
-
-    // Handle file upload
-    if ($request->hasFile('foto')) {
-        $foto = $request->file('foto');
-        $fotoBinary = file_get_contents($foto->getRealPath()); // Konversi file ke binary
-        $validatedData['foto'] = $fotoBinary;
-    }
-
-    // Update data homestay
-    $homestay->update($validatedData);
-
-    return redirect()->route('pemilik.homestays.index')->with('success', 'Homestay berhasil diperbarui.');
-}
-    
-    public function destroy(Homestay $homestay)
     {
-        // Pastikan homestay milik user yang sedang login
         if ($homestay->pemilik_id !== Auth::id()) {
             abort(403, 'Unauthorized');
+        }
+
+        $validatedData = $request->validate([
+            'nama' => 'required|string|max:255',
+            'alamat' => 'required|string',
+            'deskripsi' => 'required|string',
+            'rating' => 'required|integer|between:1,5',
+            'fasilitas' => 'nullable|array',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        // Handle file upload dan hapus foto lama jika ada
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama
+            if ($homestay->foto) {
+                Storage::delete('public/homestays/' . $homestay->foto);
+            }
+
+            // Simpan foto baru
+            $fotoNama = time() . '.' . $request->foto->extension();
+            $request->foto->storeAs('public/homestays', $fotoNama);
+            $validatedData['foto'] = $fotoNama;
+        }
+
+        $homestay->update($validatedData);
+
+        return redirect()->route('pemilik.homestays.index')->with('success', 'Homestay berhasil diperbarui.');
+    }
+
+    public function destroy(Homestay $homestay)
+    {
+        if ($homestay->pemilik_id !== Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        // Hapus file gambar dari storage
+        if ($homestay->foto) {
+            Storage::delete('public/homestays/' . $homestay->foto);
         }
 
         $homestay->delete();

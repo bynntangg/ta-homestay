@@ -296,6 +296,24 @@
             <div class="faq-answer">Kunjungi bagian "Promo" atau cari penawaran selama proses pemesanan.</div>
         </div>
     </div>
+    <!-- FAQ -->
+    <section class="py-12">
+        <h2 class="text-2xl font-bold">FAQ</h2>
+        <div class="max-w-4xl mx-auto mt-6">
+            <details class="border p-4 rounded-lg mb-4">
+                <summary class="font-semibold cursor-pointer">Bagaimana cara memesan homestay?</summary>
+                <p class="mt-2 text-gray-600">Cari destinasi Anda, pilih tanggal, dan ikuti petunjuk pemesanan.</p>
+            </details>
+            <details class="border p-4 rounded-lg mb-4">
+                <summary class="font-semibold cursor-pointer">Bagaimana cara mendapatkan harga murah di WatHome.com?</summary>
+                <p class="mt-2 text-gray-600">Gunakan filter harga dan cari penawaran diskon spesial.</p>
+            </details>
+            <details class="border p-4 rounded-lg mb-4">
+                <summary class="font-semibold cursor-pointer">Di mana saya bisa menemukan promo di WatHome.com?</summary>
+                <p class="mt-2 text-gray-600">Kunjungi bagian "Promo" atau cari penawaran selama proses pemesanan.</p>
+            </details>
+        </div>
+    </section>
 </main>
     <!-- Footer -->
     <footer class="bg-gray-900 text-white py-6 mt-10 w-full">

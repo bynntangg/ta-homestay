@@ -16,7 +16,7 @@ class DashboardPemilikController extends Controller
         $pemilikId = Auth::id();
 
         // Ambil semua homestay yang dimiliki oleh user ini
-        $homestayIds = Homestay::where('user_id', $pemilikId)->pluck('id');
+        $homestayIds = Homestay::where('pemilik_id', $pemilikId)->pluck('id');
 
         // Total pemasukan bulan ini
         $totalPemasukanBulanan = PemesananKamar::whereHas('kamar', function ($query) use ($homestayIds) {
@@ -59,11 +59,25 @@ class DashboardPemilikController extends Controller
             ->distinct('id')
             ->count('id');
 
+        // Data per bulan
+        $dataPerBulan = PemesananKamar::whereHas('kamar', function ($query) use ($homestayIds) {
+            $query->whereIn('homestay_id', $homestayIds);
+        })
+        ->join('pemesanans', 'pemesanan_kamars.pemesanan_id', '=', 'pemesanans.id') // ✅ Gabungkan dengan tabel pemesanans
+        ->where('pemesanans.status_pemesanan', 'success')
+        ->selectRaw('MONTH(pemesanans.tanggal_pemesanan) as bulan, SUM(pemesanan_kamars.harga) as total') // ✅ Pakai tanggal_pemesanan dari pemesanans
+        ->groupBy('bulan')
+        ->orderBy('bulan')
+        ->get();
+    
+        $totalHomestay = Homestay::count();
+
         return view('pemilik.dashboard.index', compact(
             'totalPemasukanBulanan',
             'totalPemasukanTahunan',
             'progressPersen',
-            'pendingRequests'
+            'pendingRequests', 'dataPerBulan',
+            'totalHomestay'
         ));
     }
 }

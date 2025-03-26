@@ -11,6 +11,9 @@ use App\Http\Controllers\KamarController;
 
 
 Route::get('/home', function () {
+    if (!Auth::check()) {
+        return redirect('/');
+    }
     $role = Auth::user()->role;
     switch ($role) {
         case 'pengguna':
