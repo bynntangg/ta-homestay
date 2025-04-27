@@ -139,6 +139,25 @@
                     </div>
                 </div>
 
+                <!-- TAMBAHAN: Input Data Rekening Bank -->
+                <div class="form-group">
+                    <label for="nama_bank">Nama Bank</label>
+                    <input type="text" name="nama_bank" id="nama_bank" class="form-control"
+                        value="{{ $mode === 'edit' ? $homestay->nama_bank : old('nama_bank') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="nomor_rekening">Nomor Rekening</label>
+                    <input type="text" name="nomor_rekening" id="nomor_rekening" class="form-control"
+                        value="{{ $mode === 'edit' ? $homestay->nomor_rekening : old('nomor_rekening') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="atas_nama">Atas Nama</label>
+                    <input type="text" name="atas_nama" id="atas_nama" class="form-control"
+                        value="{{ $mode === 'edit' ? $homestay->atas_nama : old('atas_nama') }}" required>
+                </div>
+
                 <!-- Tombol Submit -->
                 <button type="submit" class="btn btn-primary">{{ $mode === 'create' ? 'Simpan' : 'Update' }}</button>
                 @if ($mode === 'edit')
@@ -167,6 +186,15 @@
                         <span class="ml-2 text-gray-600">({{ $homestay->rating }})</span>
                     </div>
                     </p>
+                    
+                    <!-- TAMBAHAN: Tampilkan Data Rekening -->
+                    <p class="card-text"><strong>Rekening Pembayaran:</strong></p>
+                    <ul>
+                        <li><strong>Bank:</strong> {{ $homestay->nama_bank ?? '-' }}</li>
+                        <li><strong>Nomor Rekening:</strong> {{ $homestay->nomor_rekening ?? '-' }}</li>
+                        <li><strong>Atas Nama:</strong> {{ $homestay->atas_nama ?? '-' }}</li>
+                    </ul>
+                    
                     <p class="card-text"><strong>Foto:</strong></p>
                     @if ($homestay->foto)
                         <img src="data:image/jpeg;base64,{{ base64_encode($homestay->foto) }}" alt="Foto Homestay"
@@ -176,27 +204,32 @@
                     @endif
                     <p class="card-text"><strong>Fasilitas:</strong></p>
                     <ul>
-                        @foreach ($homestay->fasilitas as $fasilitas => $status)
-                            @if ($status)
+                        @php
+                            // Pastikan fasilitas adalah array sebelum melakukan foreach
+                            $fasilitas = is_array($homestay->fasilitas) ? $homestay->fasilitas : [];
+                        @endphp
+
+                        @foreach ($availableFacilities as $key => $label)
+                            @if (isset($fasilitas[$key]) && $fasilitas[$key])
                                 <li>
-                                    @if ($fasilitas === 'wifi')
+                                    @if ($key === 'wifi')
                                         <i class="bi bi-wifi"></i>
-                                    @elseif ($fasilitas === 'parkir')
+                                    @elseif ($key === 'parkir')
                                         <i class="bi bi-p-circle"></i>
-                                    @elseif ($fasilitas === 'ac')
+                                    @elseif ($key === 'ac')
                                         <i class="bi bi-snow"></i>
-                                    @elseif ($fasilitas === 'kolam_renang')
+                                    @elseif ($key === 'kolam_renang')
                                         <i class="bi bi-water"></i>
-                                    @elseif ($fasilitas === 'breakfast')
+                                    @elseif ($key === 'breakfast')
                                         <i class="bi bi-cup-straw"></i>
-                                    @elseif ($fasilitas === 'tv')
+                                    @elseif ($key === 'tv')
                                         <i class="bi bi-tv"></i>
-                                    @elseif ($fasilitas === 'shower')
+                                    @elseif ($key === 'shower')
                                         <i class="bi bi-droplet"></i>
-                                    @elseif ($fasilitas === 'kitchen')
+                                    @elseif ($key === 'kitchen')
                                         <i class="bi bi-egg-fried"></i>
                                     @endif
-                                    {{ ucfirst(str_replace('_', ' ', $fasilitas)) }}
+                                    {{ $label }}
                                 </li>
                             @endif
                         @endforeach
@@ -214,4 +247,4 @@
             </div>
         @endif
     </div>
-@endsection 
+@endsection

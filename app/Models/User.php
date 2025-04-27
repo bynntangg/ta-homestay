@@ -52,4 +52,28 @@ class User extends Authenticatable
     {
         return $this->hasMany(Homestay::class, 'pemilik_id');
     }
+    // Model User
+    public function homestay()
+    {
+        return $this->hasOne(Homestay::class);  // Pastikan relasi ini ada
+    }
+    public function pemesanans()
+    {
+        return $this->hasMany(Pemesanan::class);
+    }
+    public function ulasans()
+    {
+        return $this->hasMany(Review::class);
+    }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+    // di app/Models/User.php
+    public function setNomorTeleponAttribute($value)
+    {
+        // Bersihkan nomor telepon saat disimpan
+        $cleaned = preg_replace('/[^0-9]/', '', $value);
+        $this->attributes['nomor_telepon'] = $cleaned;
+    }
 }
